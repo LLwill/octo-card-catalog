@@ -1,0 +1,481 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "ColumnSet",
+      "spacing": "None",
+      "verticalContentAlignment": "Center",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "stretch",
+          "verticalContentAlignment": "Center",
+          "items": [
+            {
+              "type": "ColumnSet",
+              "spacing": "None",
+              "verticalContentAlignment": "Center",
+              "columns": [
+                {
+                  "type": "Column",
+                  "width": "auto",
+                  "items": [
+                    {
+                      "type": "Image",
+                      "url": "https://api.iconify.design/lucide/file-text.svg?color=%236b7075",
+                      "altText": "文档",
+                      "width": "16px",
+                      "height": "16px",
+                      "spacing": "None"
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "auto",
+                  "spacing": "Default",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "文档申请",
+                      "size": "Small",
+                      "weight": "Bolder",
+                      "spacing": "None",
+                      "wrap": false
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "spacing": "Small",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "·  ${document.sourceName}",
+                      "size": "Small",
+                      "isSubtle": true,
+                      "spacing": "None",
+                      "wrap": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "ColumnSet",
+              "spacing": "None",
+              "columns": [
+                {
+                  "type": "Column",
+                  "width": "auto",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "待你处理",
+                      "size": "Small",
+                      "weight": "Bolder",
+                      "color": "Warning",
+                      "spacing": "None",
+                      "wrap": false
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "auto",
+                  "spacing": "Default",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "${permission.label}",
+                      "size": "Small",
+                      "isSubtle": true,
+                      "spacing": "None",
+                      "wrap": false
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "accent",
+      "bleed": true,
+      "separator": true,
+      "spacing": "None",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "spacing": "None",
+          "verticalContentAlignment": "Center",
+          "selectAction": {
+            "type": "Action.OpenUrl",
+            "title": "打开文档",
+            "url": "${document.url}"
+          },
+          "columns": [
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "${document.title}",
+                  "size": "ExtraLarge",
+                  "weight": "Bolder",
+                  "spacing": "None",
+                  "wrap": true
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "verticalContentAlignment": "Center",
+              "spacing": "Small",
+              "items": [
+                {
+                  "type": "Image",
+                  "url": "https://api.iconify.design/lucide/external-link.svg?color=%236b7075",
+                  "altText": "在新窗口打开",
+                  "width": "13px",
+                  "height": "13px",
+                  "spacing": "None"
+                }
+              ]
+            },
+            { "type": "Column", "width": "stretch", "items": [] }
+          ]
+        },
+        {
+          "type": "RichTextBlock",
+          "spacing": "Small",
+          "inlines": [
+            {
+              "type": "TextRun",
+              "text": "${requester.name} ",
+              "weight": "Bolder",
+              "size": "Medium"
+            },
+            {
+              "type": "TextRun",
+              "text": "申请成为此文档的${permission.roleLabel}。",
+              "isSubtle": true,
+              "size": "Medium"
+            }
+          ]
+        },
+        {
+          "type": "ColumnSet",
+          "spacing": "Medium",
+          "verticalContentAlignment": "Center",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "Image",
+                  "url": "${requester.avatarUrl}",
+                  "altText": "${requester.name}",
+                  "style": "Person",
+                  "width": "28px",
+                  "height": "28px",
+                  "spacing": "None"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "stretch",
+              "spacing": "Default",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "${requester.name}",
+                  "weight": "Bolder",
+                  "size": "Small",
+                  "spacing": "None",
+                  "wrap": false
+                },
+                {
+                  "type": "ColumnSet",
+                  "spacing": "None",
+                  "columns": [
+                    {
+                      "type": "Column",
+                      "width": "auto",
+                      "items": [
+                        {
+                          "type": "Image",
+                          "url": "https://api.iconify.design/lucide/user-round.svg?color=%236b7075",
+                          "altText": "",
+                          "width": "12px",
+                          "height": "12px",
+                          "spacing": "None"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Column",
+                      "width": "auto",
+                      "spacing": "Small",
+                      "items": [
+                        {
+                          "type": "TextBlock",
+                          "text": "申请人",
+                          "size": "Small",
+                          "isSubtle": true,
+                          "spacing": "None",
+                          "wrap": false
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "verticalContentAlignment": "Bottom",
+              "items": [
+                {
+                  "type": "ColumnSet",
+                  "spacing": "None",
+                  "columns": [
+                    {
+                      "type": "Column",
+                      "width": "auto",
+                      "items": [
+                        {
+                          "type": "Image",
+                          "url": "https://api.iconify.design/lucide/clock-3.svg?color=%236b7075",
+                          "altText": "",
+                          "width": "13px",
+                          "height": "13px",
+                          "spacing": "None"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Column",
+                      "width": "auto",
+                      "spacing": "Small",
+                      "items": [
+                        {
+                          "type": "TextBlock",
+                          "text": "${requestedAtDisplay}",
+                          "size": "Small",
+                          "isSubtle": true,
+                          "spacing": "None",
+                          "wrap": false
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Container",
+          "style": "emphasis",
+          "spacing": "Large",
+          "items": [
+            {
+              "type": "ColumnSet",
+              "spacing": "None",
+              "columns": [
+                {
+                  "type": "Column",
+                  "width": "auto",
+                  "items": [
+                    {
+                      "type": "Image",
+                      "url": "https://api.iconify.design/lucide/message-square.svg?color=%23555b61",
+                      "altText": "",
+                      "width": "18px",
+                      "height": "18px",
+                      "spacing": "None"
+                    }
+                  ]
+                },
+                {
+                  "type": "Column",
+                  "width": "stretch",
+                  "spacing": "Default",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "申请原因",
+                      "size": "Small",
+                      "weight": "Bolder",
+                      "spacing": "None"
+                    },
+                    {
+                      "type": "TextBlock",
+                      "text": "${requestReason}",
+                      "size": "Small",
+                      "isSubtle": true,
+                      "spacing": "Small",
+                      "wrap": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Container",
+          "id": "deny_panel",
+          "style": "attention",
+          "isVisible": false,
+          "spacing": "Large",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "拒绝文档访问申请",
+              "size": "Medium",
+              "weight": "Bolder",
+              "spacing": "None",
+              "wrap": true
+            },
+            {
+              "type": "TextBlock",
+              "text": "拒绝后，${requester.name} 将无法获得“${document.title}”的${permission.label}。",
+              "isSubtle": true,
+              "spacing": "Medium",
+              "wrap": true
+            },
+            {
+              "type": "Input.Text",
+              "id": "deny_reason",
+              "label": "拒绝原因",
+              "placeholder": "说明原因，便于申请人调整后重新申请",
+              "isMultiline": true,
+              "isRequired": true,
+              "errorMessage": "请填写拒绝原因",
+              "maxLength": 200,
+              "spacing": "Medium"
+            },
+            {
+              "type": "TextBlock",
+              "text": "最多 200 个字",
+              "size": "Small",
+              "isSubtle": true,
+              "spacing": "Small"
+            },
+            {
+              "type": "ActionSet",
+              "spacing": "Medium",
+              "horizontalAlignment": "Right",
+              "actions": [
+                {
+                  "type": "Action.ToggleVisibility",
+                  "title": "取消",
+                  "targetElements": [
+                    { "elementId": "deny_panel", "isVisible": false },
+                    { "elementId": "primary_actions", "isVisible": true }
+                  ]
+                },
+                {
+                  "type": "Action.Submit",
+                  "id": "deny",
+                  "title": "确认拒绝",
+                  "style": "destructive",
+                  "iconUrl": "https://api.iconify.design/lucide/x.svg?color=%23f54a45",
+                  "data": { "action": "deny", "request_id": "${requestId}" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "bleed": true,
+      "separator": true,
+      "spacing": "None",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "spacing": "None",
+          "verticalContentAlignment": "Center",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "申请于 ${messageTimeDisplay}",
+                  "size": "Small",
+                  "isSubtle": true,
+                  "spacing": "None",
+                  "wrap": false
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "ActionSet",
+                  "id": "primary_actions",
+                  "spacing": "None",
+                  "actions": [
+                    {
+                      "type": "Action.OpenUrl",
+                      "id": "view_document",
+                      "title": "查看详情",
+                      "url": "${document.url}",
+                      "iconUrl": "https://api.iconify.design/lucide/eye.svg?color=%23555b61"
+                    },
+                    {
+                      "type": "Action.ToggleVisibility",
+                      "title": "拒绝",
+                      "style": "destructive",
+                      "iconUrl": "https://api.iconify.design/lucide/x.svg?color=%23f54a45",
+                      "targetElements": [
+                        { "elementId": "deny_panel", "isVisible": true },
+                        { "elementId": "primary_actions", "isVisible": false }
+                      ]
+                    },
+                    {
+                      "type": "Action.Submit",
+                      "id": "approve",
+                      "title": "允许",
+                      "style": "positive",
+                      "associatedInputs": "none",
+                      "iconUrl": "https://api.iconify.design/lucide/check.svg?color=%23ffffff",
+                      "data": { "action": "approve", "request_id": "${requestId}" }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
