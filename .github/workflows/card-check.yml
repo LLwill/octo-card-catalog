@@ -1,0 +1,78 @@
+name: catalog-card-check
+
+on:
+  pull_request:
+    paths:
+      - "cards/**"
+      - ".github/workflows/card-check.yml"
+      - "scripts/changed-cards.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: catalog-card-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    name: discover-cards
+    runs-on: ubuntu-latest
+    outputs:
+      paths: ${{ steps.changed.outputs.paths }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Resolve changed Card packages
+        id: changed
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          paths="$(node scripts/changed-cards.mjs --base "$BASE_SHA" --head "$HEAD_SHA" --mode check)"
+          echo "paths=$paths" >> "$GITHUB_OUTPUT"
+          echo "Changed Card packages: $paths"
+
+  validate:
+    name: validate-${{ matrix.card-path }}
+    runs-on: ubuntu-latest
+    needs: discover
+    if: ${{ needs.discover.outputs.paths != '[]' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        card-path: ${{ fromJSON(needs.discover.outputs.paths) }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Validate Card package
+        uses: LLwill/octo-card-forge/actions/card-check@github-delivery/v0.1.0
+        with:
+          card-path: ${{ matrix.card-path }}
+          cli-version: "0.2.2"
+          profile-version: "1.2.0-rc.4"
+
+  card-check:
+    name: card-check
+    runs-on: ubuntu-latest
+    needs:
+      - discover
+      - validate
+    if: ${{ always() }}
+    steps:
+      - name: Require all Card checks to pass
+        env:
+          DISCOVER_RESULT: ${{ needs.discover.result }}
+          VALIDATE_RESULT: ${{ needs.validate.result }}
+        run: |
+          set -euo pipefail
+          test "$DISCOVER_RESULT" = "success"
+          case "$VALIDATE_RESULT" in
+            success|skipped) ;;
+            *) exit 1 ;;
+          esac

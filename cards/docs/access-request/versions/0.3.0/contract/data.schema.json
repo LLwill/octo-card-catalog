@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "文档访问申请卡 0.3 数据契约",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "requestId",
+    "state",
+    "document",
+    "requester",
+    "permission",
+    "requestReason",
+    "requestedAtDisplay",
+    "messageTimeDisplay"
+  ],
+  "properties": {
+    "requestId": { "type": "string", "minLength": 1 },
+    "state": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "url", "sourceName"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "sourceName": { "type": "string", "minLength": 1 }
+      }
+    },
+    "requester": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "avatarUrl"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "avatarUrl": { "type": "string", "format": "uri", "pattern": "^https://" }
+      }
+    },
+    "permission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "roleLabel"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "roleLabel": { "type": "string", "minLength": 1 }
+      }
+    },
+    "requestReason": { "type": "string" },
+    "requestedAtDisplay": { "type": "string" },
+    "messageTimeDisplay": { "type": "string" },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operatorName", "decidedAtDisplay"],
+      "properties": {
+        "operatorName": { "type": "string" },
+        "decidedAtDisplay": { "type": "string" },
+        "rejectionReason": { "type": "string" }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "state": { "enum": ["approved", "rejected"] } } },
+      "then": { "required": ["decision"] }
+    },
+    {
+      "if": { "properties": { "state": { "const": "rejected" } } },
+      "then": { "properties": { "decision": { "required": ["rejectionReason"] } } }
+    }
+  ]
+}
