@@ -31,7 +31,9 @@ must match the exact version in `manifest.json`.
 
 Pull requests run `card-check` for every changed draft or versioned Card package.
 The check compiles all samples and uploads a verification report, compiled
-previews and a Card Artifact as workflow artifacts.
+previews, a Card Artifact, a preview-channel Catalog Snapshot and a
+self-contained Forge Web entry as a workflow artifact. Download the artifact
+from the workflow summary, extract it and open `preview/index.html`.
 
 When a new version directory is merged into `main`, `card-release` creates:
 
@@ -43,7 +45,7 @@ When a new version directory is merged into `main`, `card-release` creates:
 - `verification.json`.
 
 Existing Card tags and Releases are never overwritten. Catalog workflows pin
-GitHub Delivery Actions `github-delivery/v0.1.0`, CLI `0.2.2` and Render Profile
+GitHub Delivery Actions `github-delivery/v0.2.0`, CLI `0.2.4` and Render Profile
 `1.2.0-rc.4`.
 
 ## Pilot
