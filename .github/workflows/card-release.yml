@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "cards/**/versions/**"
+      - ".github/workflows/card-release.yml"
+      - "scripts/catalog-release-records.mjs"
 
 permissions:
   contents: write
@@ -58,3 +60,93 @@ jobs:
           profile-version: "1.2.0-rc.4"
           release-branch: main
           github-token: ${{ github.token }}
+
+  snapshot:
+    name: publish-catalog-snapshot
+    runs-on: ubuntu-latest
+    needs:
+      - discover
+      - publish
+    if: ${{ always() && needs.discover.result == 'success' && (needs.publish.result == 'success' || needs.publish.result == 'skipped') }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          registry-url: https://registry.npmjs.org/
+          package-manager-cache: false
+
+      - name: Install pinned Snapshot tooling
+        env:
+          TOOL_ROOT: ${{ runner.temp }}/octo-card-snapshot-tools
+        run: |
+          set -euo pipefail
+          npm install \
+            --prefix "$TOOL_ROOT" \
+            --no-save \
+            --ignore-scripts \
+            --no-audit \
+            --no-fund \
+            @mlt-org/octo-card-cli@0.2.3
+          echo "$TOOL_ROOT/node_modules/.bin" >> "$GITHUB_PATH"
+
+      - name: Collect immutable Card Release records
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          node scripts/catalog-release-records.mjs \
+            --repository "$GITHUB_REPOSITORY" \
+            --output .octo-card/catalog-release-records.json
+
+      - name: Build and verify Catalog Snapshot
+        id: build
+        run: |
+          set -euo pipefail
+          octo-card snapshot build \
+            --input .octo-card/catalog-release-records.json \
+            --revision "$GITHUB_SHA" \
+            --channel release \
+            --out .octo-card/catalog-snapshot.v1.json \
+            --format json | tee .octo-card/catalog-snapshot.build.json
+          digest="$(node -p "require('./.octo-card/catalog-snapshot.build.json').sha256")"
+          printf '%s\n' "$digest" > .octo-card/catalog-snapshot.v1.sha256
+          octo-card snapshot verify .octo-card/catalog-snapshot.v1.json --sha256 "$digest" --format json
+          echo "sha256=$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Catalog Snapshot workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: catalog-snapshot-${{ github.sha }}
+          path: |
+            .octo-card/catalog-snapshot.v1.json
+            .octo-card/catalog-snapshot.v1.sha256
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Create immutable Catalog Snapshot Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SNAPSHOT_SHA256: ${{ steps.build.outputs.sha256 }}
+        run: |
+          set -euo pipefail
+          tag="catalog-snapshot/$GITHUB_SHA"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            mkdir -p .octo-card/existing
+            gh release download "$tag" --dir .octo-card/existing
+            cmp .octo-card/catalog-snapshot.v1.json .octo-card/existing/catalog-snapshot.v1.json
+            cmp .octo-card/catalog-snapshot.v1.sha256 .octo-card/existing/catalog-snapshot.v1.sha256
+            echo "Existing immutable Snapshot Release verified: $tag"
+          else
+            gh release create "$tag" \
+              .octo-card/catalog-snapshot.v1.json \
+              .octo-card/catalog-snapshot.v1.sha256 \
+              --target "$GITHUB_SHA" \
+              --title "Catalog Snapshot ${GITHUB_SHA::12}" \
+              --notes "Immutable Octo Card Catalog Snapshot v1. Canonical SHA-256: $SNAPSHOT_SHA256"
+          fi

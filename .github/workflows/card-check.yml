@@ -5,6 +5,8 @@ on:
     paths:
       - "cards/**"
       - ".github/workflows/card-check.yml"
+      - ".github/workflows/card-release.yml"
+      - "scripts/catalog-release-records.mjs"
       - "scripts/changed-cards.mjs"
 
 permissions:
