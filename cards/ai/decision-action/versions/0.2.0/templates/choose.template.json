@@ -1,0 +1,143 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "id": "octo-surface-header-accent-main",
+      "style": "accent",
+      "bleed": true,
+      "spacing": "None",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "spacing": "None",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "${kicker}",
+                  "size": "Small",
+                  "isSubtle": true,
+                  "spacing": "None",
+                  "wrap": true
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "${replyTargetLabel}",
+                  "size": "Small",
+                  "weight": "Bolder",
+                  "isSubtle": true,
+                  "spacing": "None",
+                  "wrap": true,
+                  "horizontalAlignment": "Right"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TextBlock",
+          "text": "${title}",
+          "size": "Large",
+          "weight": "Bolder",
+          "spacing": "Small",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "${description}",
+          "size": "Small",
+          "isSubtle": true,
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    },
+    {
+      "type": "Input.ChoiceSet",
+      "id": "decision_choice",
+      "style": "expanded",
+      "isRequired": true,
+      "errorMessage": "请选择一个方向",
+      "value": "${defaultValue}",
+      "spacing": "Large",
+      "wrap": true,
+      "choices": [
+        {
+          "$data": "${options}",
+          "title": "${label}",
+          "value": "${value}"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "将作为新消息发送给 @${replyTargetName}",
+          "size": "Small",
+          "isSubtle": true,
+          "spacing": "None",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "${previewMessage}",
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "id": "octo-surface-footer-default-actions",
+      "style": "emphasis",
+      "bleed": true,
+      "separator": true,
+      "spacing": "Large",
+      "items": [
+        {
+          "type": "ActionSet",
+          "horizontalAlignment": "Right",
+          "actions": [
+            {
+              "type": "Action.Submit",
+              "id": "decision_send",
+              "title": "${sendActionTitle}",
+              "style": "positive",
+              "data": {
+                "action": "decision_send",
+                "effect": "append_user_message",
+                "decision_id": "${decisionId}",
+                "reply_target_uid": "${replyTargetUid}"
+              }
+            }
+          ]
+        },
+        {
+          "type": "TextBlock",
+          "text": "${footerHint}",
+          "size": "Small",
+          "isSubtle": true,
+          "horizontalAlignment": "Right",
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    }
+  ]
+}

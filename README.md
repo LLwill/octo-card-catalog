@@ -48,8 +48,15 @@ Existing Card tags and Releases are never overwritten. Catalog workflows pin
 GitHub Delivery Actions `github-delivery/v0.2.0`, CLI `0.2.4` and Render Profile
 `1.2.0-rc.4`.
 
-## Pilot
+## Cards
 
-`docs.access-request` is the first migrated Pilot Card. Its existing `0.3.0`
-version is retained as an immutable package while the root remains available for
-the next draft iteration.
+The Catalog currently contains these mutable Card sources and their retained
+version packages:
+
+- `docs.access-request` - document access request;
+- `ai.decision-action` - action selection and confirmation;
+- `ai.reasoning-process` - reasoning progress and result states.
+
+The Card root remains available for the next draft iteration. Directories under
+`versions/` are immutable release candidates and are published by the Catalog
+release workflow after merge.
