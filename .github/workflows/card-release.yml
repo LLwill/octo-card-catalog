@@ -150,3 +150,27 @@ jobs:
               --title "Catalog Snapshot ${GITHUB_SHA::12}" \
               --notes "Immutable Octo Card Catalog Snapshot v1. Canonical SHA-256: $SNAPSHOT_SHA256"
           fi
+
+  trigger-deployment:
+    name: trigger-forge-catalog-pipeline
+    runs-on: ubuntu-latest
+    needs:
+      - snapshot
+    steps:
+      - name: Trigger the protected Forge Catalog pipeline
+        env:
+          FORGE_GITLAB_TRIGGER_URL: ${{ secrets.FORGE_GITLAB_TRIGGER_URL }}
+          FORGE_GITLAB_TRIGGER_TOKEN: ${{ secrets.FORGE_GITLAB_TRIGGER_TOKEN }}
+          CATALOG_REVISION: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test -n "$FORGE_GITLAB_TRIGGER_URL"
+          test -n "$FORGE_GITLAB_TRIGGER_TOKEN"
+          printf '%s' "$CATALOG_REVISION" | grep -Eq '^[0-9a-f]{40}$'
+          curl --fail-with-body --show-error --silent \
+            --request POST \
+            --form "token=$FORGE_GITLAB_TRIGGER_TOKEN" \
+            --form "ref=main" \
+            --form "variables[PIPELINE_MODE]=catalog" \
+            --form "variables[CATALOG_REVISION]=$CATALOG_REVISION" \
+            "$FORGE_GITLAB_TRIGGER_URL"
