@@ -1,0 +1,230 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "style": "accent",
+      "bleed": true,
+      "spacing": "None",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "spacing": "None",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "verticalContentAlignment": "Center",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "${kicker}",
+                  "size": "Small",
+                  "isSubtle": true,
+                  "spacing": "None",
+                  "wrap": true
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "verticalContentAlignment": "Center",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "${replyTargetLabel}",
+                  "size": "Small",
+                  "isSubtle": true,
+                  "spacing": "None",
+                  "wrap": true,
+                  "horizontalAlignment": "Right"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TextBlock",
+          "text": "${title}",
+          "size": "Medium",
+          "weight": "Bolder",
+          "wrap": true,
+          "spacing": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${description}",
+          "isSubtle": true,
+          "wrap": true,
+          "spacing": "None"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${planTitle}",
+          "weight": "Bolder",
+          "wrap": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${planBody}",
+          "wrap": true,
+          "spacing": "Small"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${previewHint}",
+          "size": "Small",
+          "wrap": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "确认后会用一条新消息通知 ${replyTargetName} 继续，不在卡片中直接启动。",
+          "size": "Small",
+          "isSubtle": true,
+          "wrap": true,
+          "spacing": "Small"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "id": "feedback_panel",
+      "isVisible": false,
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "补充建议 · @${replyTargetName}",
+          "size": "Small",
+          "weight": "Bolder",
+          "spacing": "None",
+          "wrap": true
+        },
+        {
+          "type": "Input.Text",
+          "id": "feedback_text",
+          "isMultiline": true,
+          "isRequired": true,
+          "maxLength": 500,
+          "placeholder": "${feedbackPlaceholder}",
+          "errorMessage": "请填写补充建议后再发送",
+          "spacing": "Small"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "default",
+      "bleed": true,
+      "spacing": "Large",
+      "items": [
+        {
+          "type": "ActionSet",
+          "id": "primary_actions",
+          "spacing": "Medium",
+          "actions": [
+            {
+              "type": "Action.Submit",
+              "id": "decision_confirm",
+              "title": "${confirmActionTitle}",
+              "style": "positive",
+              "associatedInputs": "none",
+              "data": {
+                "action": "decision_confirm",
+                "decisionId": "${decisionId}",
+                "mode": "confirm",
+                "replyTargetName": "${replyTargetName}"
+              }
+            },
+            {
+              "type": "Action.ToggleVisibility",
+              "title": "${openFeedbackActionTitle}",
+              "targetElements": [
+                {
+                  "elementId": "feedback_panel",
+                  "isVisible": true
+                },
+                {
+                  "elementId": "primary_actions",
+                  "isVisible": false
+                },
+                {
+                  "elementId": "feedback_actions",
+                  "isVisible": true
+                }
+              ]
+            }
+          ],
+          "horizontalAlignment": "Right"
+        },
+        {
+          "type": "ActionSet",
+          "id": "feedback_actions",
+          "isVisible": false,
+          "spacing": "Medium",
+          "actions": [
+            {
+              "type": "Action.Submit",
+              "id": "decision_feedback",
+              "title": "${sendFeedbackActionTitle}",
+              "style": "positive",
+              "data": {
+                "action": "decision_feedback",
+                "decisionId": "${decisionId}",
+                "mode": "confirm",
+                "replyTargetName": "${replyTargetName}"
+              }
+            },
+            {
+              "type": "Action.ToggleVisibility",
+              "title": "${cancelFeedbackActionTitle}",
+              "targetElements": [
+                {
+                  "elementId": "feedback_panel",
+                  "isVisible": false
+                },
+                {
+                  "elementId": "primary_actions",
+                  "isVisible": true
+                },
+                {
+                  "elementId": "feedback_actions",
+                  "isVisible": false
+                }
+              ]
+            }
+          ],
+          "horizontalAlignment": "Right"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${footerHint}",
+          "size": "Small",
+          "isSubtle": true,
+          "wrap": true,
+          "spacing": "Small",
+          "horizontalAlignment": "Right"
+        }
+      ]
+    }
+  ]
+}

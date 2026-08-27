@@ -1,0 +1,96 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "style": "accent",
+      "bleed": true,
+      "spacing": "None",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "spacing": "None",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "verticalContentAlignment": "Center",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "选择已发送",
+                  "size": "Small",
+                  "isSubtle": true,
+                  "spacing": "None",
+                  "wrap": true
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "verticalContentAlignment": "Center",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "已发送为新消息",
+                  "size": "Small",
+                  "weight": "Bolder",
+                  "color": "Good",
+                  "spacing": "None",
+                  "wrap": true,
+                  "horizontalAlignment": "Right"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TextBlock",
+          "text": "选择已发送为新消息",
+          "size": "Medium",
+          "weight": "Bolder",
+          "wrap": true,
+          "spacing": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "已通过下方新消息回复 @Octo 智能助手。卡片本身不执行任务，也不承载后续状态。",
+          "isSubtle": true,
+          "wrap": true,
+          "spacing": "None"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "已发送内容",
+          "size": "Small",
+          "isSubtle": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "补全消息交互",
+          "wrap": true,
+          "spacing": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "回复对象：@Octo 智能助手",
+          "size": "Small",
+          "isSubtle": true,
+          "wrap": true,
+          "spacing": "Small"
+        }
+      ]
+    }
+  ]
+}

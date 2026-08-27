@@ -1,0 +1,12 @@
+{
+  "decisionId": "decision-next-step-001",
+  "mode": "submitted",
+  "kicker": "选择已发送",
+  "title": "已作为新消息发出",
+  "description": "卡片本身不执行任务，后续由会话中的新消息继续。",
+  "replyTargetLabel": "回复 @Octo 智能助手",
+  "replyTargetUid": "octo-assistant",
+  "replyTargetName": "Octo 智能助手",
+  "statusLabel": "已发送",
+  "submittedSummary": "我选择「补全消息交互」，请按这个方向继续。"
+}

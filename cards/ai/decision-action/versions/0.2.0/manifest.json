@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "id": "ai.decision-action",
+  "name": "行动决策卡",
+  "version": "0.2.0",
+  "contractVersion": "1.1.0",
+  "adaptiveCardVersion": "1.5",
+  "renderProfile": "octo-chat@1.2.0-rc.4",
+  "defaultLocale": "zh-CN",
+  "dataSchema": "contract/data.schema.json",
+  "views": {
+    "choose": {
+      "wireProfile": "octo/v2",
+      "template": "templates/choose.template.json",
+      "samples": ["samples/choose.json"]
+    },
+    "submitted": {
+      "wireProfile": "octo/v1",
+      "template": "templates/submitted.template.json",
+      "samples": ["samples/submitted.json"]
+    }
+  }
+}

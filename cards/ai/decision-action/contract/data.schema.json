@@ -1,0 +1,200 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "行动决策卡数据契约",
+  "description": "面向渲染的 Card ViewModel。业务后端自行完成领域模型映射；卡片只收集用户选择/确认，提交后由消息服务生成独立用户消息并提及回复对象。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "mode",
+    "kicker",
+    "title",
+    "description",
+    "replyTargetLabel",
+    "replyTargetName"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "决策实例唯一 ID，随 Submit 回传给业务侧",
+      "examples": ["decision-next-step-001"]
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["choose", "confirm", "submitted"],
+      "description": "卡片展示模式：多方案选择 / 单一计划确认 / 已发送结果"
+    },
+    "kicker": {
+      "type": "string",
+      "minLength": 1,
+      "description": "标题上方提示文案",
+      "examples": ["需要你选择", "需要你确认"]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "卡片主标题",
+      "examples": ["下一步从哪个方向继续？", "确认按此计划继续？"]
+    },
+    "description": {
+      "type": "string",
+      "description": "标题下方说明，强调选择不会在卡内直接执行",
+      "examples": ["选择只会生成一条新的用户消息，不会在这张卡内直接执行。"]
+    },
+    "replyTargetLabel": {
+      "type": "string",
+      "minLength": 1,
+      "description": "右上角回复对象展示文案",
+      "examples": ["回复 @Octo 智能助手"]
+    },
+    "replyTargetName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "被提及的 AI/用户展示名（不含 @）",
+      "examples": ["Octo 智能助手"]
+    },
+    "previewHint": {
+      "type": "string",
+      "description": "预览区上方说明",
+      "examples": ["将作为新消息发送给 @Octo 智能助手"]
+    },
+    "previewPlaceholder": {
+      "type": "string",
+      "description": "尚未选择时的预览占位文案",
+      "examples": ["请选择至少一个方向。"]
+    },
+    "footerHint": {
+      "type": "string",
+      "description": "页脚提交后效果说明",
+      "examples": ["发送后将新增一条独立用户消息 · @Octo 智能助手"]
+    },
+    "isMultiSelect": {
+      "type": "boolean",
+      "description": "choose 模式是否允许多选；仅 mode=choose 使用"
+    },
+    "options": {
+      "type": "array",
+      "description": "可选方向列表；仅 mode=choose 使用。label 应为展示就绪文案",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["value", "label"],
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "description": "选项值，随 Submit 回传",
+            "examples": ["interaction", "mobile", "handoff"]
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "ChoiceSet 展示文案（可含推荐标记与描述）",
+            "examples": [
+              "补全消息交互（推荐）— 明确卡片、独立用户消息与后续 AI 回复的边界。"
+            ]
+          }
+        }
+      }
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "ChoiceSet 默认选中值；多选时用逗号分隔",
+      "examples": ["interaction", "interaction,mobile"]
+    },
+    "notePlaceholder": {
+      "type": "string",
+      "description": "可选补充说明输入占位符；仅 mode=choose 使用",
+      "examples": ["可选：补充说明（将一并作为新消息发出）"]
+    },
+    "sendActionTitle": {
+      "type": "string",
+      "description": "choose 模式主按钮文案",
+      "examples": ["发送选择"]
+    },
+    "planTitle": {
+      "type": "string",
+      "description": "确认计划标题；仅 mode=confirm 使用",
+      "examples": ["01 · 补齐移动端验收并整理开发规格"]
+    },
+    "planBody": {
+      "type": "string",
+      "description": "确认计划正文，可用换行分隔步骤；仅 mode=confirm 使用"
+    },
+    "feedbackPlaceholder": {
+      "type": "string",
+      "description": "补充建议输入占位符；仅 mode=confirm 使用",
+      "examples": ["例如：先补充移动端验收，再继续"]
+    },
+    "confirmActionTitle": {
+      "type": "string",
+      "description": "确认并发送按钮文案",
+      "examples": ["确认并发送"]
+    },
+    "openFeedbackActionTitle": {
+      "type": "string",
+      "description": "打开补充建议面板按钮文案",
+      "examples": ["补充建议"]
+    },
+    "sendFeedbackActionTitle": {
+      "type": "string",
+      "description": "发送建议按钮文案",
+      "examples": ["发送建议"]
+    },
+    "cancelFeedbackActionTitle": {
+      "type": "string",
+      "description": "取消补充建议按钮文案",
+      "examples": ["取消"]
+    },
+    "statusLabel": {
+      "type": "string",
+      "description": "已发送状态标签；仅 mode=submitted 使用",
+      "examples": ["已发送为新消息"]
+    },
+    "submittedSummary": {
+      "type": "string",
+      "description": "已发送内容摘要；仅 mode=submitted 使用",
+      "examples": ["补全消息交互"]
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "mode": { "const": "choose" } } },
+      "then": {
+        "required": [
+          "isMultiSelect",
+          "options",
+          "previewHint",
+          "previewPlaceholder",
+          "footerHint",
+          "notePlaceholder",
+          "sendActionTitle"
+        ]
+      }
+    },
+    {
+      "if": { "properties": { "mode": { "const": "confirm" } } },
+      "then": {
+        "required": [
+          "planTitle",
+          "planBody",
+          "previewHint",
+          "footerHint",
+          "feedbackPlaceholder",
+          "confirmActionTitle",
+          "openFeedbackActionTitle",
+          "sendFeedbackActionTitle",
+          "cancelFeedbackActionTitle"
+        ]
+      }
+    },
+    {
+      "if": { "properties": { "mode": { "const": "submitted" } } },
+      "then": {
+        "required": ["statusLabel", "submittedSummary"]
+      }
+    }
+  ]
+}

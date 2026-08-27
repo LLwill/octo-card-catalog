@@ -1,0 +1,85 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "id": "octo-surface-header-accent-main",
+      "style": "accent",
+      "bleed": true,
+      "spacing": "None",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "spacing": "None",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "${kicker}",
+                  "size": "Small",
+                  "isSubtle": true,
+                  "spacing": "None"
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "${statusLabel}",
+                  "size": "Small",
+                  "weight": "Bolder",
+                  "color": "Good",
+                  "spacing": "None"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TextBlock",
+          "text": "${title}",
+          "size": "Large",
+          "weight": "Bolder",
+          "spacing": "Small",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "${description}",
+          "size": "Small",
+          "isSubtle": true,
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "spacing": "Large",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "已发送内容",
+          "size": "Small",
+          "isSubtle": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "${submittedSummary}",
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    }
+  ]
+}

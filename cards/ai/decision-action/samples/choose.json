@@ -1,0 +1,30 @@
+{
+  "decisionId": "decision-next-step-001",
+  "mode": "choose",
+  "kicker": "需要你选择",
+  "title": "下一步从哪个方向继续？",
+  "description": "选择只会生成一条新的用户消息，不会在这张卡内直接执行。",
+  "replyTargetLabel": "回复 @Octo 智能助手",
+  "replyTargetName": "Octo 智能助手",
+  "previewHint": "将作为新消息发送给 @Octo 智能助手",
+  "previewPlaceholder": "请选择至少一个方向。",
+  "footerHint": "发送后将新增一条独立用户消息 · @Octo 智能助手",
+  "isMultiSelect": false,
+  "options": [
+    {
+      "value": "interaction",
+      "label": "补全消息交互（推荐）\n明确卡片、独立用户消息与后续 AI 回复的边界。"
+    },
+    {
+      "value": "mobile",
+      "label": "完善移动端布局\n检查窄屏卡片、长按钮与建议输入区的排列。"
+    },
+    {
+      "value": "handoff",
+      "label": "输出开发规格\n整理组件结构、提及字段与消息关联契约。"
+    }
+  ],
+  "defaultValue": "",
+  "notePlaceholder": "可选补充说明（将一并作为新消息发出）",
+  "sendActionTitle": "发送选择"
+}

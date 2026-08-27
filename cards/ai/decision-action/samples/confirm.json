@@ -1,0 +1,18 @@
+{
+  "decisionId": "decision-next-step-003",
+  "mode": "confirm",
+  "kicker": "需要你确认",
+  "title": "确认按此计划继续？",
+  "description": "你可以直接确认，也可以补充建议后再发送。",
+  "replyTargetLabel": "回复 @Octo 智能助手",
+  "replyTargetName": "Octo 智能助手",
+  "previewHint": "将作为新消息发送给 @Octo 智能助手",
+  "footerHint": "发送后将新增一条独立用户消息 · @Octo 智能助手",
+  "planTitle": "01 · 补齐移动端验收并整理开发规格",
+  "planBody": "1. 检查 390px 窄屏下的卡片、按钮与输入区。\n2. 整理消息边界、提及对象和提交字段。\n3. 把验收结论写入开发交接说明。",
+  "feedbackPlaceholder": "例如：先补充移动端验收，再继续",
+  "confirmActionTitle": "确认并发送",
+  "openFeedbackActionTitle": "补充建议",
+  "sendFeedbackActionTitle": "发送建议",
+  "cancelFeedbackActionTitle": "取消"
+}

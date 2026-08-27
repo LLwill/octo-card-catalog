@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "行动决策卡 0.2 数据契约",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "mode",
+    "kicker",
+    "title",
+    "description",
+    "replyTargetLabel",
+    "replyTargetUid",
+    "replyTargetName"
+  ],
+  "properties": {
+    "decisionId": { "type": "string", "minLength": 1 },
+    "mode": { "type": "string", "enum": ["choose", "submitted"] },
+    "kicker": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "replyTargetLabel": { "type": "string", "minLength": 1 },
+    "replyTargetUid": { "type": "string", "minLength": 1 },
+    "replyTargetName": { "type": "string", "minLength": 1 },
+    "options": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["value", "label"],
+        "properties": {
+          "value": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "defaultValue": { "type": "string" },
+    "previewMessage": { "type": "string" },
+    "footerHint": { "type": "string" },
+    "sendActionTitle": { "type": "string" },
+    "statusLabel": { "type": "string" },
+    "submittedSummary": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "mode": { "const": "choose" } } },
+      "then": {
+        "required": [
+          "options",
+          "defaultValue",
+          "previewMessage",
+          "footerHint",
+          "sendActionTitle"
+        ]
+      }
+    },
+    {
+      "if": { "properties": { "mode": { "const": "submitted" } } },
+      "then": { "required": ["statusLabel", "submittedSummary"] }
+    }
+  ]
+}

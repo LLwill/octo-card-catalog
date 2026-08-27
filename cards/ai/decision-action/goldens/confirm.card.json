@@ -1,0 +1,230 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "Container",
+      "style": "accent",
+      "bleed": true,
+      "spacing": "None",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "spacing": "None",
+          "columns": [
+            {
+              "type": "Column",
+              "width": "stretch",
+              "verticalContentAlignment": "Center",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "需要你确认",
+                  "size": "Small",
+                  "isSubtle": true,
+                  "spacing": "None",
+                  "wrap": true
+                }
+              ]
+            },
+            {
+              "type": "Column",
+              "width": "auto",
+              "verticalContentAlignment": "Center",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "回复 @Octo 智能助手",
+                  "size": "Small",
+                  "isSubtle": true,
+                  "spacing": "None",
+                  "wrap": true,
+                  "horizontalAlignment": "Right"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "TextBlock",
+          "text": "确认按此计划继续？",
+          "size": "Medium",
+          "weight": "Bolder",
+          "wrap": true,
+          "spacing": "Small"
+        },
+        {
+          "type": "TextBlock",
+          "text": "你可以直接确认，也可以补充建议后再发送。",
+          "isSubtle": true,
+          "wrap": true,
+          "spacing": "None"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "01 · 补齐移动端验收并整理开发规格",
+          "weight": "Bolder",
+          "wrap": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "1. 检查 390px 窄屏下的卡片、按钮与输入区。\n2. 整理消息边界、提及对象和提交字段。\n3. 把验收结论写入开发交接说明。",
+          "wrap": true,
+          "spacing": "Small"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "将作为新消息发送给 @Octo 智能助手",
+          "size": "Small",
+          "wrap": true,
+          "spacing": "None"
+        },
+        {
+          "type": "TextBlock",
+          "text": "确认后会用一条新消息通知 Octo 智能助手 继续，不在卡片中直接启动。",
+          "size": "Small",
+          "isSubtle": true,
+          "wrap": true,
+          "spacing": "Small"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "id": "feedback_panel",
+      "isVisible": false,
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "补充建议 · @Octo 智能助手",
+          "size": "Small",
+          "weight": "Bolder",
+          "spacing": "None",
+          "wrap": true
+        },
+        {
+          "type": "Input.Text",
+          "id": "feedback_text",
+          "isMultiline": true,
+          "isRequired": true,
+          "maxLength": 500,
+          "placeholder": "例如：先补充移动端验收，再继续",
+          "errorMessage": "请填写补充建议后再发送",
+          "spacing": "Small"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "default",
+      "bleed": true,
+      "spacing": "Large",
+      "items": [
+        {
+          "type": "ActionSet",
+          "id": "primary_actions",
+          "spacing": "Medium",
+          "actions": [
+            {
+              "type": "Action.Submit",
+              "id": "decision_confirm",
+              "title": "确认并发送",
+              "style": "positive",
+              "associatedInputs": "none",
+              "data": {
+                "action": "decision_confirm",
+                "decisionId": "decision-next-step-003",
+                "mode": "confirm",
+                "replyTargetName": "Octo 智能助手"
+              }
+            },
+            {
+              "type": "Action.ToggleVisibility",
+              "title": "补充建议",
+              "targetElements": [
+                {
+                  "elementId": "feedback_panel",
+                  "isVisible": true
+                },
+                {
+                  "elementId": "primary_actions",
+                  "isVisible": false
+                },
+                {
+                  "elementId": "feedback_actions",
+                  "isVisible": true
+                }
+              ]
+            }
+          ],
+          "horizontalAlignment": "Right"
+        },
+        {
+          "type": "ActionSet",
+          "id": "feedback_actions",
+          "isVisible": false,
+          "spacing": "Medium",
+          "actions": [
+            {
+              "type": "Action.Submit",
+              "id": "decision_feedback",
+              "title": "发送建议",
+              "style": "positive",
+              "data": {
+                "action": "decision_feedback",
+                "decisionId": "decision-next-step-003",
+                "mode": "confirm",
+                "replyTargetName": "Octo 智能助手"
+              }
+            },
+            {
+              "type": "Action.ToggleVisibility",
+              "title": "取消",
+              "targetElements": [
+                {
+                  "elementId": "feedback_panel",
+                  "isVisible": false
+                },
+                {
+                  "elementId": "primary_actions",
+                  "isVisible": true
+                },
+                {
+                  "elementId": "feedback_actions",
+                  "isVisible": false
+                }
+              ]
+            }
+          ],
+          "horizontalAlignment": "Right"
+        },
+        {
+          "type": "TextBlock",
+          "text": "发送后将新增一条独立用户消息 · @Octo 智能助手",
+          "size": "Small",
+          "isSubtle": true,
+          "wrap": true,
+          "spacing": "Small",
+          "horizontalAlignment": "Right"
+        }
+      ]
+    }
+  ]
+}
