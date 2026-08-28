@@ -83,7 +83,7 @@ jobs:
     needs:
       - discover
       - publish
-    if: ${{ always() && needs.discover.result == 'success' && (needs.publish.result == 'success' || needs.publish.result == 'skipped') }}
+    if: ${{ always() && needs.discover.result == 'success' && (github.event_name == 'workflow_dispatch' || needs.discover.outputs.paths != '[]') && (needs.publish.result == 'success' || needs.publish.result == 'skipped') }}
     outputs:
       transfer-sha256: ${{ steps.transfer.outputs.sha256 }}
     steps:
