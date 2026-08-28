@@ -48,6 +48,22 @@ Existing Card tags and Releases are never overwritten. Catalog workflows pin
 GitHub Delivery Actions `github-delivery/v0.2.0`, CLI `0.2.4` and Render Profile
 `1.2.0-rc.4`.
 
+After the immutable Catalog Snapshot is published, the workflow downloads and
+verifies every referenced Artifact and Handoff, packages those immutable inputs
+as `catalog-transfer/<revision>/catalog-transfer.tgz` in the Forge project's
+GitLab Generic Package Registry, then triggers the protected Forge pipeline.
+The repository must define these Actions secrets:
+
+- `FORGE_GITLAB_PACKAGE_USERNAME`: Forge GitLab Deploy Token username with
+  Package Registry write access;
+- `FORGE_GITLAB_PACKAGE_TOKEN`: matching Deploy Token value;
+- `FORGE_GITLAB_TRIGGER_URL`: Forge project pipeline trigger API URL;
+- `FORGE_GITLAB_TRIGGER_TOKEN`: matching pipeline trigger token.
+
+The trigger carries the exact Catalog commit and transfer archive SHA-256.
+GitLab downloads the package internally with its job token, builds the final
+Catalog image, and owns registry credentials and deployment-repository updates.
+
 ## Cards
 
 The Catalog currently contains these mutable Card sources and their retained
