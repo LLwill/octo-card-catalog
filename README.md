@@ -48,21 +48,20 @@ Existing Card tags and Releases are never overwritten. Catalog workflows pin
 GitHub Delivery Actions `github-delivery/v0.2.0`, CLI `0.2.4` and Render Profile
 `1.2.0-rc.4`.
 
-After the immutable Catalog Snapshot is published, the workflow downloads and
-verifies every referenced Artifact and Handoff, packages those immutable inputs
-as `catalog-transfer/<revision>/catalog-transfer.tgz` in the Forge project's
-GitLab Generic Package Registry, then triggers the protected Forge pipeline.
-The repository must define these Actions secrets:
+After the immutable Catalog Snapshot is built, the workflow downloads and
+verifies every referenced Artifact and Handoff, then publishes one immutable
+Catalog Release containing:
 
-- `FORGE_GITLAB_PACKAGE_USERNAME`: Forge GitLab Deploy Token username with
-  Package Registry write access;
-- `FORGE_GITLAB_PACKAGE_TOKEN`: matching Deploy Token value;
-- `FORGE_GITLAB_TRIGGER_URL`: Forge project pipeline trigger API URL;
-- `FORGE_GITLAB_TRIGGER_TOKEN`: matching pipeline trigger token.
+- `catalog-snapshot.v1.json` and `catalog-snapshot.v1.sha256`;
+- `catalog-transfer.tgz` and `catalog-transfer.tgz.sha256`;
+- `catalog-relay-request.v1.json`, the machine-readable deployment request.
 
-The trigger carries the exact Catalog commit and transfer archive SHA-256.
-GitLab downloads the package internally with its job token, builds the final
-Catalog image, and owns registry credentials and deployment-repository updates.
+A repository `workflow_run` webhook notifies the internal OpenClaw relay after
+the workflow succeeds. The relay verifies the fixed GitHub repository, workflow
+run and Release assets, copies the transfer package to the Forge GitLab Generic
+Package Registry, then triggers the protected Forge pipeline. GitHub does not
+store internal GitLab credentials and does not need direct network access to
+GitLab. See [the relay runbook](docs/openclaw-catalog-relay.md).
 
 ## Cards
 
