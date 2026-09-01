@@ -2,15 +2,6 @@ name: catalog-card-release
 
 on:
   workflow_dispatch:
-    inputs:
-      pipeline-mode:
-        description: Forge pipeline mode
-        required: true
-        default: catalog
-        type: choice
-        options:
-          - catalog
-          - bootstrap
   push:
     branches:
       - main
@@ -19,6 +10,7 @@ on:
       - ".github/workflows/card-release.yml"
       - "scripts/catalog-release-records.mjs"
       - "scripts/package-catalog-transfer.mjs"
+      - "scripts/write-catalog-relay-request.mjs"
 
 permissions:
   contents: write
@@ -84,8 +76,6 @@ jobs:
       - discover
       - publish
     if: ${{ always() && needs.discover.result == 'success' && (github.event_name == 'workflow_dispatch' || needs.discover.outputs.paths != '[]') && (needs.publish.result == 'success' || needs.publish.result == 'skipped') }}
-    outputs:
-      transfer-sha256: ${{ steps.transfer.outputs.sha256 }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -137,38 +127,6 @@ jobs:
           octo-card snapshot verify .octo-card/catalog-snapshot.v1.json --sha256 "$digest" --format json
           echo "sha256=$digest" >> "$GITHUB_OUTPUT"
 
-      - name: Upload Catalog Snapshot workflow artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: catalog-snapshot-${{ github.sha }}
-          path: |
-            .octo-card/catalog-snapshot.v1.json
-            .octo-card/catalog-snapshot.v1.sha256
-          if-no-files-found: error
-          retention-days: 90
-
-      - name: Create immutable Catalog Snapshot Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          SNAPSHOT_SHA256: ${{ steps.build.outputs.sha256 }}
-        run: |
-          set -euo pipefail
-          tag="catalog-snapshot/$GITHUB_SHA"
-          if gh release view "$tag" >/dev/null 2>&1; then
-            mkdir -p .octo-card/existing
-            gh release download "$tag" --dir .octo-card/existing
-            cmp .octo-card/catalog-snapshot.v1.json .octo-card/existing/catalog-snapshot.v1.json
-            cmp .octo-card/catalog-snapshot.v1.sha256 .octo-card/existing/catalog-snapshot.v1.sha256
-            echo "Existing immutable Snapshot Release verified: $tag"
-          else
-            gh release create "$tag" \
-              .octo-card/catalog-snapshot.v1.json \
-              .octo-card/catalog-snapshot.v1.sha256 \
-              --target "$GITHUB_SHA" \
-              --title "Catalog Snapshot ${GITHUB_SHA::12}" \
-              --notes "Immutable Octo Card Catalog Snapshot v1. Canonical SHA-256: $SNAPSHOT_SHA256"
-          fi
-
       - name: Test Catalog transfer packager
         run: node --test tests/package-catalog-transfer.test.mjs
 
@@ -186,81 +144,65 @@ jobs:
           sha256="$(node -p "require('./.octo-card/catalog-transfer.build.json').sha256")"
           echo "sha256=$sha256" >> "$GITHUB_OUTPUT"
 
-      - name: Publish immutable transfer package to Forge GitLab
+      - name: Write Catalog relay request
         env:
-          FORGE_GITLAB_PACKAGE_USERNAME: ${{ secrets.FORGE_GITLAB_PACKAGE_USERNAME }}
-          FORGE_GITLAB_PACKAGE_TOKEN: ${{ secrets.FORGE_GITLAB_PACKAGE_TOKEN }}
-          FORGE_GITLAB_TRIGGER_URL: ${{ secrets.FORGE_GITLAB_TRIGGER_URL }}
+          TRANSFER_SHA256: ${{ steps.transfer.outputs.sha256 }}
         run: |
           set -euo pipefail
-          test -n "$FORGE_GITLAB_PACKAGE_USERNAME"
-          test -n "$FORGE_GITLAB_PACKAGE_TOKEN"
-          test -n "$FORGE_GITLAB_TRIGGER_URL"
-          project_api_url="${FORGE_GITLAB_TRIGGER_URL%/trigger/pipeline}"
-          package_url="$project_api_url/packages/generic/catalog-transfer/$GITHUB_SHA"
-          mkdir -p .octo-card/registry-check
-          for file in catalog-transfer.tgz catalog-transfer.tgz.sha256; do
-            status="$(curl --location --silent --show-error \
-              --user "$FORGE_GITLAB_PACKAGE_USERNAME:$FORGE_GITLAB_PACKAGE_TOKEN" \
-              --output ".octo-card/registry-check/$file" \
-              --write-out '%{http_code}' \
-              "$package_url/$file")"
-            case "$status" in
-              200)
-                cmp ".octo-card/$file" ".octo-card/registry-check/$file"
-                echo "Existing immutable package file verified: $file"
-                ;;
-              404)
-                curl --fail-with-body --show-error --silent \
-                  --user "$FORGE_GITLAB_PACKAGE_USERNAME:$FORGE_GITLAB_PACKAGE_TOKEN" \
-                  --upload-file ".octo-card/$file" \
-                  "$package_url/$file"
-                ;;
-              *)
-                echo "Unexpected Package Registry response for $file: HTTP $status"
-                exit 1
-                ;;
-            esac
-          done
-          curl --location --fail-with-body --show-error --silent \
-            --user "$FORGE_GITLAB_PACKAGE_USERNAME:$FORGE_GITLAB_PACKAGE_TOKEN" \
-            --output .octo-card/registry-check/catalog-transfer.tgz \
-            "$package_url/catalog-transfer.tgz"
-          curl --location --fail-with-body --show-error --silent \
-            --user "$FORGE_GITLAB_PACKAGE_USERNAME:$FORGE_GITLAB_PACKAGE_TOKEN" \
-            --output .octo-card/registry-check/catalog-transfer.tgz.sha256 \
-            "$package_url/catalog-transfer.tgz.sha256"
-          (
-            cd .octo-card/registry-check
-            sha256sum --check catalog-transfer.tgz.sha256
-          )
-          cmp .octo-card/catalog-transfer.tgz .octo-card/registry-check/catalog-transfer.tgz
+          node scripts/write-catalog-relay-request.mjs \
+            --revision "$GITHUB_SHA" \
+            --transfer-sha256 "$TRANSFER_SHA256" \
+            --repository "$GITHUB_REPOSITORY" \
+            --output .octo-card/catalog-relay-request.v1.json
 
-  trigger-deployment:
-    name: trigger-forge-catalog-pipeline
-    runs-on: ubuntu-latest
-    needs:
-      - snapshot
-    steps:
-      - name: Trigger the protected Forge Catalog pipeline
+      - name: Upload Catalog release workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: catalog-release-${{ github.sha }}
+          path: |
+            .octo-card/catalog-snapshot.v1.json
+            .octo-card/catalog-snapshot.v1.sha256
+            .octo-card/catalog-transfer.tgz
+            .octo-card/catalog-transfer.tgz.sha256
+            .octo-card/catalog-relay-request.v1.json
+          if-no-files-found: error
+          retention-days: 90
+
+      - name: Publish immutable Catalog Release
         env:
-          FORGE_GITLAB_TRIGGER_URL: ${{ secrets.FORGE_GITLAB_TRIGGER_URL }}
-          FORGE_GITLAB_TRIGGER_TOKEN: ${{ secrets.FORGE_GITLAB_TRIGGER_TOKEN }}
-          CATALOG_REVISION: ${{ github.sha }}
-          CATALOG_TRANSFER_SHA256: ${{ needs.snapshot.outputs.transfer-sha256 }}
-          PIPELINE_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs['pipeline-mode'] || 'catalog' }}
+          GH_TOKEN: ${{ github.token }}
+          SNAPSHOT_SHA256: ${{ steps.build.outputs.sha256 }}
+          TRANSFER_SHA256: ${{ steps.transfer.outputs.sha256 }}
         run: |
           set -euo pipefail
-          test -n "$FORGE_GITLAB_TRIGGER_URL"
-          test -n "$FORGE_GITLAB_TRIGGER_TOKEN"
-          printf '%s' "$CATALOG_REVISION" | grep -Eq '^[0-9a-f]{40}$'
-          printf '%s' "$CATALOG_TRANSFER_SHA256" | grep -Eq '^[0-9a-f]{64}$'
-          case "$PIPELINE_MODE" in catalog|bootstrap) ;; *) echo "Invalid pipeline mode"; exit 1 ;; esac
-          curl --fail-with-body --show-error --silent \
-            --request POST \
-            --form "token=$FORGE_GITLAB_TRIGGER_TOKEN" \
-            --form "ref=main" \
-            --form "variables[PIPELINE_MODE]=$PIPELINE_MODE" \
-            --form "variables[CATALOG_REVISION]=$CATALOG_REVISION" \
-            --form "variables[CATALOG_TRANSFER_SHA256]=$CATALOG_TRANSFER_SHA256" \
-            "$FORGE_GITLAB_TRIGGER_URL"
+          tag="catalog-snapshot/$GITHUB_SHA"
+          files=(
+            catalog-snapshot.v1.json
+            catalog-snapshot.v1.sha256
+            catalog-transfer.tgz
+            catalog-transfer.tgz.sha256
+            catalog-relay-request.v1.json
+          )
+          if gh release view "$tag" >/dev/null 2>&1; then
+            mkdir -p .octo-card/existing
+            published_assets="$(gh release view "$tag" --json assets --jq '.assets[].name')"
+            for file in "${files[@]}"; do
+              if grep -Fxq "$file" <<< "$published_assets"; then
+                gh release download "$tag" --pattern "$file" --dir .octo-card/existing
+                cmp ".octo-card/$file" ".octo-card/existing/$file"
+                echo "Existing immutable Release asset verified: $file"
+              else
+                gh release upload "$tag" ".octo-card/$file"
+                echo "Completed existing Release with missing asset: $file"
+              fi
+            done
+          else
+            assets=()
+            for file in "${files[@]}"; do
+              assets+=(".octo-card/$file")
+            done
+            gh release create "$tag" "${assets[@]}" \
+              --target "$GITHUB_SHA" \
+              --title "Catalog Snapshot ${GITHUB_SHA::12}" \
+              --notes "Immutable Octo Card Catalog Snapshot v1. Snapshot SHA-256: $SNAPSHOT_SHA256. Transfer SHA-256: $TRANSFER_SHA256."
+          fi
